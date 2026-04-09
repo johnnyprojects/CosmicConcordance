@@ -36,6 +36,8 @@ public class CosmicConcord {
 		int tabLen = solveTab();
 
 		// print
+		System.out.println("Maximum length using Recusion (with Memoization): " + memoLen);
+		System.out.println("Maximum length using Tabulation: " + tabLen);
     }
 
     public static int solveRecMemo(int i, int j, int[][][] memo, int dips) {
