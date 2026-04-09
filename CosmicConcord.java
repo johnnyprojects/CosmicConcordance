@@ -5,11 +5,15 @@
 */
 
 public class CosmicConcord {
-    public int solve(int[] A, int[] B, int N, int M, int D, int G, int K) {
-        return 1;
+	protected static int[] A, B;
+	protected static int D, G, K;
+
+    public static void solve(int[] a, int[] b, int n, int m, int d, int g, int k) {
+        A = a; B = b; D = d; G = g; K = k;
+    	// call solveRecMemo and solveTab here, print results
     }
 
-    public int solveRecMemo(int[] A, int[] B, int N, int M, int D, int G, int K, int[][] memo) {
+    public int solveRecMemo(int N, int M, int[][] memo) {
         if (N == 0 || M == 0) 
             return 0; 
   
@@ -18,15 +22,15 @@ public class CosmicConcord {
   
         if (A[N - 1] == B[M - 1]) 
 		{ 
-            memo[N][M] = 1 + lcs(A, B, N - 1, M - 1, D, G, K, memo); 
+            memo[N][M] = 1 + solveRecMemo(N - 1, M - 1, memo); 
             return memo[N][M]; 
         } 
   
-        memo[N][M] = Math.max(lcs(A, B, N, M - 1, D, G, K, memo), lcs(A, B, N - 1, M, D, G, K, memo)); 
+        memo[N][M] = Math.max(solveRecMemo(N, M - 1, memo), solveRecMemo(N - 1, M, memo)); 
         return memo[N][M]; 
     }
 
-    public int solveTab(int[] A, int[] B, int N, int M, int D, int G, int K, int[][] memo) {
+    public int solveTab(int N, int M, int[][] memo) {
         int c[][] = new int[N + 1][M + 1]; 
 		char b[][] = new char[N + 1][M + 1]; 
 		
@@ -60,16 +64,6 @@ public class CosmicConcord {
         }
         return c[N][M]; 
     }
-	
-    public static int lcs(int[] A, int[] B, int N, int M, int D, int G, int K, int[][] memo) 
-	{ 
-		if (N == 0 || M == 0) 
-			return 0; 
-		if (A[N - 1] == B[M - 1]) 
-			return 1 + lcs(A, B, N - 1, M - 1, D, G, K, memo); 
-		else
-			return max(lcs(A, B, N, M - 1, D, G, K, memo), lcs(A, B, N - 1, M, D, G, K, memo)); 
-	}
 
     public static int max(int a, int b) 
 	{ 
