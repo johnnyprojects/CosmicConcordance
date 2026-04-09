@@ -24,7 +24,7 @@ public class CosmicConcord {
 		  with those calls exploring O(K) dip levels
 		- therefore O(N^2 * M^2 * K)
 		*/
-		int memoLen = -1;
+		int memoLen = 0;
 		for (int i = 0; i < N; i++) {
 			for (int j = 0; j < M; j++) {
 				if (Math.abs(A[i] - B[j]) <= D)
@@ -33,7 +33,7 @@ public class CosmicConcord {
 		}
 
 		// tabulation
-		int tabLen = solveTab(N, M);
+		int tabLen = solveTab();
 
 		// print
     }
@@ -43,6 +43,7 @@ public class CosmicConcord {
         	return memo[i][j][dips];
 
 		int length = 0;
+
 		for (int ni = i + 1; ni < N; ni++)
 		{
 			for (int nj = j + 1; nj < M; nj++)
@@ -64,34 +65,50 @@ public class CosmicConcord {
         return memo[i][j][dips]; 
     }
 
-    public static int solveTab(int N, int M) {
-        int c[][] = new int[N + 1][M + 1]; 
+    public static int solveTab() {
+        int c[][][] = new int[N][M][K + 1];
+
+		int length = 0;
 		
-		for(int i = 0; i <= N; ++i)
-			c[i][0] = 0;
-		
-		for(int j = 0; j <= M; ++j)
-			c[0][j] = 0;
-		
-		
-        for (int i = 1; i <= N; i++) 
-		{ 
-            for (int j = 1; j <= M; j++) 
-			{ 
-                if (A[i - 1] == B[j - 1]) 
+		// replace double for loop going forward with one nested loop going backwards to fill c
+		// O(N * M * K * N * M)
+		// first two loops find start location from the back like in class lecture
+		for (int i = N - 1; i >= 0; i--)
+		{
+			for (int j = M - 1; j >= 0; j--)
+			{
+				if (Math.abs(A[i] - B[j]) <= D)
 				{
-                    c[i][j] = c[i - 1][j - 1] + 1; 
+					for (int dips = K; dips >= 0; dips--) // compute answer for each dip count, worst case O(K)
+					{ 
+						int next_best = tabHelper(i, j, c, dips); // call helper
+						c[i][j][dips] = next_best + 1; // labels in "table" the length for "cell"
+						length = Math.max(length, c[i][j][dips]);
+					}
 				}
-                else if(c[i - 1][j] >= c[i][j - 1])
-				{
-                    c[i][j] = c[i - 1][j];
-				}
-				else
-				{
-					c[i][j] = c[i][j - 1];
-				}
-            } 
-        }
-        return c[N][M]; 
+			}
+		}
+		return length;
     }
+
+	private static int tabHelper(int i, int j, int[][][] c, int dips) {
+		int next_best = 0;
+
+		// these next loops are just the same as before
+		// they find the next best options that are within tolerance D
+		// then do a check if they have proper growth, or try using a K
+		for (int ni = i + 1; ni < N; ni++) { 
+			for (int nj = j + 1; nj < M; nj++) {
+				if (Math.abs(A[ni] - B[nj]) <= D)
+					{
+					boolean inc = (A[ni] - A[i] >= G) && (B[nj] - B[j] >= G);
+					if (inc)
+						next_best = Math.max(next_best, c[ni][nj][dips]);
+					else if (dips + 1 <= K)
+						next_best = Math.max(next_best, c[ni][nj][dips + 1]);
+				}
+			}
+		}
+		return next_best;
+	}
 }
