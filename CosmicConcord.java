@@ -36,7 +36,7 @@ public class CosmicConcord {
 		int tabLen = solveTab();
 
 		// print
-		System.out.println("Maximum length using Recusion (with Memoization): " + memoLen);
+		System.out.println("Maximum length using Recursion (with Memoization): " + memoLen);
 		System.out.println("Maximum length using Tabulation: " + tabLen);
     }
 
